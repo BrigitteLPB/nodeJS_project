@@ -1,0 +1,119 @@
+// See https://go.microsoft.com/fwlink/?LinkId=733558
+// for the documentation about the tasks.json format
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "npm: compile",
+			"type": "npm",
+			"script": "compile",
+			"problemMatcher": [
+				"$tsc"
+			],
+			"group": {
+				"kind": "build",
+				"isDefault": true
+			},
+			"dependsOn": [
+				"move assets"
+			],
+			"dependsOrder": "parallel"
+		},
+		{
+			"label": "npm: watch",
+			"type": "npm",
+			"script": "watch"
+		},
+		{
+			"label": "npm: run",
+			"type": "npm",
+			"script": "run",
+			"dependsOn": [
+				"npm: compile"
+			],
+			"problemMatcher": [
+				"$tsc"
+			],
+			"group": "test"
+		},
+		{
+			"label": "npm: install",
+			"type": "npm",
+			"group": "none",
+			"script": "install"
+		},
+		{
+			"type": "npm",
+			"script": "test",
+			"dependsOn": [
+				"npm: compile"
+			],
+			"group": {
+				"kind": "test",
+				"isDefault": true
+			}
+		},
+		{
+			"label": "clean",
+			"type": "shell",
+			"group": "none",
+			"problemMatcher": "$go",
+			"windows": {
+				// "command": "del",
+				// "args": [
+				// 	"-Path",
+				// 	"${workspaceFolder}\\build",
+				// 	"-Force",
+				// 	"-Recurse"
+				// ]
+				"command": "rmdir",
+				"args": [
+					"/S",
+					"/Q",
+					"${workspaceFolder}\\build"
+				]
+			},
+			"linux": {
+				"command": "rm",
+				"args": [
+					"-r",
+					"${workspaceFolder}/build"
+				]
+			}
+		},
+		{
+			"label": "clean module",
+			"type": "shell",
+			"group": "none",
+			"problemMatcher": "$go",
+			"windows": {
+				"command": "rd",
+				"args": [
+					"/S",
+					"/Q",
+					"${workspaceFolder}\\node_modules"
+				]
+			},
+			"linux": {
+				"command": "rm",
+				"args": [
+					"-r",
+					"${workspaceFolder}/node_modules"
+				]
+			}
+		},
+		{
+			"label": "move assets",
+			"type": "shell",
+			"windows": {
+				"command": "robocopy .\\assets .\\build\\assets **.* /e /j /purge && if %ERRORLEVEL% GEQ 9 exit /b 1"
+			},
+			"linux":{
+				"command": "rsync ..."
+			}, 
+			"problemMatcher": [
+				"$go"
+			],
+		}
+	]
+}
